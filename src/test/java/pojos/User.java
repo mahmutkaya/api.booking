@@ -1,4 +1,4 @@
 package pojos;
 
-public record User(String username, String password, String name) {
+public record User(String username, String password) {
 }
