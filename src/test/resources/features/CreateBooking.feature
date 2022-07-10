@@ -1,18 +1,18 @@
-@createBooking
+@CREATEBooking
 Feature: Create Booking
 
-  @TC01 @smoke @deleteBooking
+  @TC01 @deleteBooking
   Scenario: Create a booking WITH ALL REQUIRED FIELDS
     Given a booking with following details:
       | firstname | lastname | totalprice | depositpaid | additionalneeds |
-      | Jim       | Brown    | 123        | totalprice  | ice cream       |
+      | Jim       | Brown    | 123        | true        | ice cream       |
     And following booking dates:
       | checkin    | checkout   |
       | 2018-01-01 | 2019-01-01 |
 
     When I create the booking
     Then the status code should be 200
-    And response should contain booking details with an id
+    And response should contain booking details
 
   @TC02
   Scenario Outline: Create a booking <test_case>

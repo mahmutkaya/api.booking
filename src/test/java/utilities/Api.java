@@ -12,9 +12,6 @@ import static io.restassured.RestAssured.given;
 
 public class Api {
 
-    public static final String BOOKING = "/booking";
-    public static final String BOOKING_ID = "/booking/%s";
-
     private static final String BASE_URI = ConfigReader.getProperty("base_uri");
     private static final String AUTH = "/auth";
 
@@ -23,6 +20,8 @@ public class Api {
     private static final String PASSWORD = "password";
 
     private static final Map<String, Object> headerSpecs = new HashMap<>();
+
+    public static ValidatableResponse response;
 
     private static RequestSpecification getRequest() {
         return given()
@@ -50,25 +49,30 @@ public class Api {
     }
 
     public static ValidatableResponse get(String endpoint) {
-        return getRequest().get(endpoint).then();
+        response = getRequest().get(endpoint).then();
+        return response;
     }
 
     public static ValidatableResponse post(String endpoint, Object reqBody) {
-        return getRequest().body(reqBody).post(endpoint).then();
+        response = getRequest().body(reqBody).post(endpoint).then();
+        return response;
     }
 
     public static ValidatableResponse put(String endpoint, Object reqBody) {
         generateToken();
-        return getRequest().body(reqBody).put(endpoint).then();
+        response = getRequest().body(reqBody).put(endpoint).then();
+        return response;
     }
 
     public static ValidatableResponse patch(String endpoint, Object reqBody) {
         generateToken();
-        return getRequest().body(reqBody).patch(endpoint).then();
+        response = getRequest().body(reqBody).patch(endpoint).then();
+        return response;
     }
 
     public static ValidatableResponse delete(String endpoint) {
         generateToken();
-        return getRequest().delete(endpoint).then();
+        response = getRequest().delete(endpoint).then();
+        return response;
     }
 }

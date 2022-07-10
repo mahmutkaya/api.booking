@@ -1,14 +1,11 @@
 package pojos;
 
-import com.google.gson.Gson;
-
 import java.util.Objects;
 
 import static java.util.Objects.nonNull;
 
 public class Booking {
 
-    private static final Gson gson = new Gson();
     private String firstname;
     private String lastname;
     private int totalprice;
@@ -94,10 +91,10 @@ public class Booking {
         if (!(o instanceof Booking booking)) return false;
         return totalprice == booking.totalprice &&
                 depositpaid == booking.depositpaid &&
-                firstname.equals(booking.firstname) &&
-                lastname.equals(booking.lastname) &&
-                bookingdates.equals(booking.bookingdates) &&
-                additionalneeds.equals(booking.additionalneeds);
+                Objects.equals(firstname, booking.firstname) &&
+                Objects.equals(lastname, booking.lastname) &&
+                Objects.equals(bookingdates, booking.bookingdates) &&
+                Objects.equals(additionalneeds, booking.additionalneeds);
     }
 
     @Override

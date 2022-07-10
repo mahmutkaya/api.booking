@@ -1,25 +1,35 @@
 package stepdefinitions;
 
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.restassured.response.ValidatableResponse;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.Assert;
 import pojos.Booking;
 import pojos.BookingDates;
 import pojos.BookingOnCreate;
 import utilities.Api;
-import utilities.Context;
+import utilities.EndpointBuilder;
 
-import static org.hamcrest.Matchers.notNullValue;
+import java.util.List;
+import java.util.Map;
+
+import static java.lang.String.format;
+import static org.hamcrest.Matchers.equalTo;
+import static utilities.EndpointBuilder.BOOKING;
+import static utilities.EndpointBuilder.BOOKING_ID;
 
 public class BookingSteps extends Api {
 
+    private final String BOOKINGID = "bookingid";
+
     Booking booking;
     BookingOnCreate bookingOnCreate;
-    ValidatableResponse res;
+    SoftAssertions softAssertions = new SoftAssertions();
 
-    @Given("a booking with following details:")
+    @Given("^(?:I want to update the|a)? booking with following details:$")
     public void aBookingWithFollowingDetails(Booking bookingDt) {
         booking = bookingDt;
     }
@@ -29,23 +39,82 @@ public class BookingSteps extends Api {
         booking.setBookingdates(bookingDatesDt);
     }
 
-    @When("^I create the booking(?: (.*))?$")
-    public void iCreateTheBooking(String testCase) {
-        res = post(BOOKING, booking);
+    @When("^I (?:create|have)? the booking(?: (.*))?$")
+    public void iCreateABooking(String testCase) {
+        bookingOnCreate = post(BOOKING, booking).extract().as(BookingOnCreate.class);
+    }
+
+    @When("I update the booking")
+    public void iUpdateTheBooking() {
+        put(format(BOOKING_ID, bookingOnCreate.getBookingid()), booking);
+    }
+
+    @When("I partially update the booking")
+    public void iPartiallyUpdateTheBooking() {
+        patch(format(BOOKING_ID, bookingOnCreate.getBookingid()), booking);
+    }
+
+    @When("I make request to get all booking IDs")
+    public void iMakeRequestToGetAllBookingIDs() {
+        get(BOOKING);
+    }
+
+    @When("I make request to get all booking IDs by following filters:")
+    public void iMakeRequestToGetAllBookingIDsByFollowingFilters(DataTable params) {
+        String endpoint = EndpointBuilder.buildBookingEndpoint(params.asMap());
+        get(endpoint);
+    }
+
+    @When("I delete the booking")
+    public void iDeleteTheBooking() {
+        deleteBooking();
+        response.extract().response().prettyPrint();
     }
 
     @Then("the status code should be {int}")
     public void theStatusCodeShouldBeStatusCode(int statusCode) {
-        res.assertThat().statusCode(statusCode);
+        response.assertThat().statusCode(statusCode);
     }
 
-    @Then("response should contain booking details with an id")
-    public void responseShouldContainBookingDetailsWithAnId() {
-        res.assertThat().body("bookingid", notNullValue());
-        bookingOnCreate = res.extract().as(BookingOnCreate.class);
-        System.setProperty(Context.BOOKING_ID, String.valueOf(bookingOnCreate.getBookingid()));
-
+    @Then("response should contain( new) booking details")
+    public void responseShouldContainNewBookingDetails() {
+        bookingOnCreate = response.extract().as(BookingOnCreate.class);
         Assert.assertEquals("response contains different booking details",
                 booking, bookingOnCreate.getBooking());
+    }
+
+    @Then("response should contain following booking details:")
+    public void responseShouldContainFollowingBookingDetails(DataTable bookingDt) {
+        bookingDt.asMap()
+                .forEach((String k, String v) -> response.body(k, equalTo(v)));
+    }
+
+    @Then("response should contain all booking IDs")
+    public void responseShouldContainAllBookingIDs() {
+        List<Map<String, Integer>> jsonAsArrayList = response.extract().jsonPath().get();
+
+        jsonAsArrayList.forEach((Map<String, Integer> e) ->
+                softAssertions.assertThat(e.containsKey(BOOKINGID))
+                        .as("Check all objects have bookingid field")
+                        .isTrue()
+        );
+
+        softAssertions.assertAll();
+    }
+
+    @Then("all IDs returned should belong to bookings with following attributes:")
+    public void allIDsReturnedShouldBelongToBookingsWithFollowingAttributes(DataTable filtersDt) {
+        List<Integer> bookingIDs = response.extract().jsonPath().get(BOOKINGID);
+        bookingIDs.forEach((Integer id) -> {
+            get(format(BOOKING_ID, id));
+            filtersDt.asMap()
+                    .forEach((String key, Object value) -> response.body(key, equalTo(value)));
+        });
+    }
+
+    @After("@deleteBooking")
+    public void deleteBooking() {
+        delete(format(BOOKING_ID, bookingOnCreate.getBookingid()))
+                .statusCode(201);
     }
 }

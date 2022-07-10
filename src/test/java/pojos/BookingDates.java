@@ -30,9 +30,9 @@ public class BookingDates {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BookingDates that = (BookingDates) o;
-        return checkin.equals(that.checkin) && checkout.equals(that.checkout);
+        if (!(o instanceof BookingDates that)) return false;
+        return Objects.equals(checkin, that.checkin) &&
+                Objects.equals(checkout, that.checkout);
     }
 
     @Override

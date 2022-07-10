@@ -15,6 +15,7 @@
         <cucumber-junit.version>7.4.1</cucumber-junit.version>
         <rest-assured.version>5.1.1</rest-assured.version>
         <hamcrest.version>2.2</hamcrest.version>
+        <assertj-core.version>3.23.1</assertj-core.version>
         <gson.version>2.9.0</gson.version>
         <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
     </properties>
@@ -41,6 +42,12 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
             <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj-core.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
