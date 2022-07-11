@@ -51,5 +51,5 @@ Automated scenarios are:
 
 - Update a booking
 - Partially Update a booking
-- 
+
 - Delete a booking
