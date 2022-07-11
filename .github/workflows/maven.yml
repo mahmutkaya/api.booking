@@ -33,3 +33,9 @@ jobs:
 
       - name: Build and Test with Maven
         run: mvn -B verify --file pom.xml
+
+      - name: Archive test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test-results/output.html
