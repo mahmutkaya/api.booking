@@ -1,5 +1,5 @@
 @GETBooking
-Feature: Create Booking
+Feature: Get Booking
 
   @TC03
   Scenario: Get all booking IDs

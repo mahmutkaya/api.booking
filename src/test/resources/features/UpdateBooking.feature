@@ -1,5 +1,5 @@
 @UPDATEBooking
-Feature: Create Booking
+Feature: Update Booking
 
   @TC05 @deleteBooking
   Scenario: Update a booking
