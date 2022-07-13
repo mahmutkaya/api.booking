@@ -25,6 +25,7 @@ public class EndpointBuilder {
             case LASTNAME -> uriParams.append(format("%s%s", LASTNAME, PARAM_VALUE));
             case CHECKIN -> uriParams.append(format("%s%s", CHECKIN, PARAM_VALUE));
             case CHECKOUT -> uriParams.append(format("%s%s", CHECKOUT, PARAM_VALUE));
+            default -> throw new IllegalArgumentException(format("%s %s", key, "is not a valid uri param"));
         }
 
         return String.valueOf(uriParams);
