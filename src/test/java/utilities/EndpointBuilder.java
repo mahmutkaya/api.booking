@@ -18,8 +18,7 @@ public class EndpointBuilder {
     private static final String PARAM_VALUE = "=%s&";
 
     private static String buildUriParams(String key) {
-        String uriParam = "";
-        StringBuilder uriParams = new StringBuilder(uriParam);
+        StringBuilder uriParams = new StringBuilder();
 
         switch (key) {
             case FIRSTNAME -> uriParams.append(format("%s%s", FIRSTNAME, PARAM_VALUE));
@@ -32,14 +31,13 @@ public class EndpointBuilder {
     }
 
     public static String buildBookingEndpoint(Map<String, String> params) {
-        StringBuilder endPoint = new StringBuilder(format("%s?", BOOKING));
-        String value;
+        StringBuilder endPoint = new StringBuilder(BOOKING);
 
         if (nonNull(params)) {
+            endPoint.append("?");
             for (Map.Entry<String, String> pair : params.entrySet()) {
                 String uriParams = buildUriParams(pair.getKey());
-                value = pair.getValue();
-                endPoint.append(format(uriParams, value));
+                endPoint.append(format(uriParams, pair.getValue()));
             }
         }
         return String.valueOf(endPoint);
