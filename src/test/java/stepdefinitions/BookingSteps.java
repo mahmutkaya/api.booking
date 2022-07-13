@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 import static org.hamcrest.Matchers.equalTo;
 import static utilities.EndpointBuilder.BOOKING;
 import static utilities.EndpointBuilder.BOOKING_ID;
@@ -25,33 +26,36 @@ public class BookingSteps extends Api {
 
     private final String BOOKINGID = "bookingid";
 
-    Booking booking;
+    Booking actualBooking;
     BookingOnCreate bookingOnCreate;
     SoftAssertions softAssertions = new SoftAssertions();
 
     @Given("^(?:I want to update the|a)? booking with following details:$")
     public void aBookingWithFollowingDetails(Booking bookingDt) {
-        booking = bookingDt;
+        actualBooking = bookingDt;
     }
 
     @Given("following booking dates:")
     public void followingBookingDates(BookingDates bookingDatesDt) {
-        booking.setBookingdates(bookingDatesDt);
+        actualBooking.setBookingdates(bookingDatesDt);
     }
 
     @When("^I (?:create|have)? the booking(?: (.*))?$")
     public void iCreateABooking(String testCase) {
-        bookingOnCreate = post(BOOKING, booking).extract().as(BookingOnCreate.class);
+        post(BOOKING, actualBooking);
+        if (response.extract().response().statusCode() == 200) {
+            bookingOnCreate = response.extract().as(BookingOnCreate.class);
+        }
     }
 
     @When("I update the booking")
     public void iUpdateTheBooking() {
-        put(format(BOOKING_ID, bookingOnCreate.getBookingid()), booking);
+        put(format(BOOKING_ID, bookingOnCreate.getBookingid()), actualBooking);
     }
 
     @When("I partially update the booking")
     public void iPartiallyUpdateTheBooking() {
-        patch(format(BOOKING_ID, bookingOnCreate.getBookingid()), booking);
+        patch(format(BOOKING_ID, bookingOnCreate.getBookingid()), actualBooking);
     }
 
     @When("I make request to get all booking IDs")
@@ -68,7 +72,6 @@ public class BookingSteps extends Api {
     @When("I delete the booking")
     public void iDeleteTheBooking() {
         deleteBooking();
-        response.extract().response().prettyPrint();
     }
 
     @Then("the status code should be {int}")
@@ -78,9 +81,15 @@ public class BookingSteps extends Api {
 
     @Then("response should contain( new) booking details")
     public void responseShouldContainNewBookingDetails() {
-        bookingOnCreate = response.extract().as(BookingOnCreate.class);
+        Booking expectedBooking;
+        if (nonNull(response.extract().path(BOOKINGID))) {
+            expectedBooking = response.extract().as(BookingOnCreate.class).getBooking();
+        } else {
+            expectedBooking = response.extract().as(Booking.class);
+        }
+
         Assert.assertEquals("response contains different booking details",
-                booking, bookingOnCreate.getBooking());
+                actualBooking, expectedBooking);
     }
 
     @Then("response should contain following booking details:")
