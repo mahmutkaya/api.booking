@@ -1,17 +1,18 @@
 @UPDATEBooking
 Feature: Update Booking
 
-  @TC05 @deleteBooking
-  Scenario: Update a booking
+  Background:
     Given a booking with following details:
       | firstname | lastname | totalprice | depositpaid | additionalneeds |
       | Jim       | Brown    | 123        | true        | ice cream       |
     And following booking dates:
       | checkin    | checkout   |
       | 2022-07-01 | 2022-09-01 |
+    And I have the booking
 
-    When I have the booking
-    And I want to update the booking with following details:
+  @TC05 @deleteBooking
+  Scenario: Update a booking
+    When I want to update the booking with following details:
       | firstname | lastname | totalprice | depositpaid | additionalneeds |
       | John      | Doe      | 321        | false       | hot chocolate   |
     And following booking dates:
@@ -24,15 +25,7 @@ Feature: Update Booking
 
   @TC06 @deleteBooking
   Scenario: Partially Update a booking
-    Given a booking with following details:
-      | firstname | lastname | totalprice | depositpaid | additionalneeds |
-      | Jim       | Brown    | 123        | true        | ice cream       |
-    And following booking dates:
-      | checkin    | checkout   |
-      | 2022-07-01 | 2022-09-01 |
-
-    When I have the booking
-    And I want to update the booking with following details:
+    When I want to update the booking with following details:
       | firstname | lastname |
       | John      | Doe      |
     And I partially update the booking

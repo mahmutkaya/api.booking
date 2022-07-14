@@ -24,10 +24,10 @@ Feature: Create Booking
       | <checkin> | <checkout> |
 
     When I create the booking '<test_case>'
-    Then the status code should be <statusCode>
+    Then the status code should be 500
 
     Examples:
-      | test_case             | statusCode | firstname | lastname | totalprice | depositpaid | checkin    | checkout   | additionalneeds |
-      | WITHOUT NAME          | 500        |           | Brown    | 123        | false       | 2022-01-01 | 2022-03-01 | ice cream       |
-      | WITHOUT LAST NAME     | 500        | Jim       |          | 123        | false       | 2022-01-01 | 2022-03-01 | ice cream       |
-      | WITHOUT BOOKING DATES | 500        | Jim       | Brown    | 123        | false       |            |            | ice cream       |
+      | test_case             | firstname | lastname | totalprice | depositpaid | checkin    | checkout   | additionalneeds |
+      | WITHOUT NAME          |           | Brown    | 123        | false       | 2022-01-01 | 2022-03-01 | ice cream       |
+      | WITHOUT LAST NAME     | Jim       |          | 123        | false       | 2022-01-01 | 2022-03-01 | ice cream       |
+      | WITHOUT BOOKING DATES | Jim       | Brown    | 123        | false       |            |            | ice cream       |
