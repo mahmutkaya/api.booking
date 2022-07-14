@@ -26,23 +26,23 @@ public class BookingSteps extends Api {
 
     private final String BOOKINGID = "bookingid";
 
-    Booking actualBooking;
+    Booking booking;
     BookingOnCreate bookingOnCreate;
     SoftAssertions softAssertions = new SoftAssertions();
 
     @Given("^(?:I want to update the|a)? booking with following details:$")
     public void aBookingWithFollowingDetails(Booking bookingDt) {
-        actualBooking = bookingDt;
+        booking = bookingDt;
     }
 
     @Given("following booking dates:")
     public void followingBookingDates(BookingDates bookingDatesDt) {
-        actualBooking.setBookingdates(bookingDatesDt);
+        booking.setBookingdates(bookingDatesDt);
     }
 
     @When("^I (?:create|have)? the booking(?: (.*))?$")
     public void iCreateABooking(String testCase) {
-        post(BOOKING, actualBooking);
+        post(BOOKING, booking);
         if (response.extract().response().statusCode() == 200) {
             bookingOnCreate = response.extract().as(BookingOnCreate.class);
         }
@@ -50,12 +50,12 @@ public class BookingSteps extends Api {
 
     @When("I update the booking")
     public void iUpdateTheBooking() {
-        put(format(BOOKING_ID, bookingOnCreate.getBookingid()), actualBooking);
+        put(format(BOOKING_ID, bookingOnCreate.getBookingid()), booking);
     }
 
     @When("I partially update the booking")
     public void iPartiallyUpdateTheBooking() {
-        patch(format(BOOKING_ID, bookingOnCreate.getBookingid()), actualBooking);
+        patch(format(BOOKING_ID, bookingOnCreate.getBookingid()), booking);
     }
 
     @When("I make request to get all booking IDs")
@@ -81,15 +81,15 @@ public class BookingSteps extends Api {
 
     @Then("response should contain( new) booking details")
     public void responseShouldContainNewBookingDetails() {
-        Booking expectedBooking;
+        Booking actualBooking;
         if (nonNull(response.extract().path(BOOKINGID))) {
-            expectedBooking = response.extract().as(BookingOnCreate.class).getBooking();
+            actualBooking = response.extract().as(BookingOnCreate.class).getBooking();
         } else {
-            expectedBooking = response.extract().as(Booking.class);
+            actualBooking = response.extract().as(Booking.class);
         }
 
         Assert.assertEquals("response contains different booking details",
-                actualBooking, expectedBooking);
+                booking, actualBooking);
     }
 
     @Then("response should contain following booking details:")
